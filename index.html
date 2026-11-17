@@ -114,9 +114,23 @@ footer{text-align:center;color:#9d909b;font-size:12px;padding:18px;border-top:1p
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:30;width:min(calc(100% - 30px),430px);padding:17px 20px;border:1px solid #ff8cba;border-radius:17px;background:linear-gradient(140deg,#321326,#170e19);box-shadow:0 10px 35px #0009,0 0 24px #ff4e9630;color:#fff;text-align:center;line-height:1.55;transition:opacity .25s,transform .25s}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .toast strong{color:#ffacd0}
-#addLabelInput{width:100%;margin:8px 0 4px;padding:12px 14px;border:1px solid #76576a;border-radius:12px;background:#160f17;color:white;outline:none}
 .about-by a,footer a{color:#ffacd0;text-decoration:underline}
 @media(max-width:600px){.brand-stars{gap:4px;font-size:15px}.profile-top{gap:12px}.profile-photo{width:95px;height:115px}.profile-name{font-size:21px}.profile-grid{grid-template-columns:105px 1fr}.jelly-stage{height:245px}}
+
+#backToTop{
+ position:fixed;right:20px;bottom:22px;z-index:9;
+ width:46px;height:46px;border-radius:50%;
+ border:1px solid rgba(255,154,195,.58);
+ background:rgba(255,78,150,.22);color:#ffd0e3;
+ backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+ box-shadow:0 4px 18px rgba(255,78,150,.18);
+ font-size:27px;line-height:1;display:grid;place-items:center;
+ opacity:0;visibility:hidden;pointer-events:none;
+ transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s;
+}
+#backToTop.visible{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+#backToTop:active{transform:scale(.94)}
+
 </style>
 </head><body>
 <header class="site-header">
@@ -172,7 +186,7 @@ footer{text-align:center;color:#9d909b;font-size:12px;padding:18px;border-top:1p
     <div class="profile-label">X (Twitter)</div><div class="profile-value"><a href="https://x.com/besevboom" target="_blank" rel="noopener noreferrer">@besevboom</a></div>
   </div><p class="profile-note" id="profileNote">Age is calculated automatically.</p>
 </div></div>
-<div class="modal" id="confirmModal" role="dialog" aria-modal="true"><div class="dialog"><button class="dialog-close" data-close="confirmModal">×</button><h2 id="confirmTitle">Add another Boom spot? 💗</h2><p id="confirmDescription">Add a new voting position.</p><input id="addLabelInput" maxlength="80" placeholder="Enter a Boom place name"><button class="dialog-action" id="confirmAdd">ADD BOOM</button></div></div>
+<div class="modal" id="confirmModal" role="dialog" aria-modal="true"><div class="dialog"><button class="dialog-close" data-close="confirmModal">×</button><h2 id="confirmTitle">Add one more Boom? 💗</h2><p id="confirmDescription">Add a new voting position.</p><button class="dialog-action" id="confirmAdd">ADD BOOM</button></div></div>
 <div class="modal" id="periodModal" role="dialog" aria-modal="true"><div class="dialog"><button class="dialog-close" data-close="periodModal">×</button><h2 id="periodTitle">Voting period</h2><p id="periodDescription">The countdown targets 16 November 2126 at 00:00 Bangkok time.</p><button class="dialog-action" data-close="periodModal" id="periodClose">OK</button></div></div>
 <div class="modal" id="jellyModal" role="dialog" aria-modal="true" aria-labelledby="jellyTitle"><div class="dialog jelly-dialog"><button class="dialog-close" data-close="jellyModal" aria-label="Close">×</button><h2 id="jellyTitle">MY JELLY</h2><p class="jelly-caption" id="jellyCaption">This is Jelly Boom. Give her a little pet!</p>
   <div class="jelly-stage" id="jellyStage">
@@ -194,6 +208,7 @@ footer{text-align:center;color:#9d909b;font-size:12px;padding:18px;border-top:1p
   </div>
   <p class="jelly-caption" id="jellyMood" aria-live="polite">Jelly Boom is feeling lovely 💙</p><button class="dialog-action pet-btn" id="petButton">pet ♡</button>
 </div></div>
+<button id="backToTop" type="button" aria-label="Back to top" title="Back to top">↑</button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 
@@ -216,7 +231,7 @@ const T = {
   aboutMenu:'About this fan page',aboutBoom:'About Boom Tharatorn',language:'Language',
   aouTitle:'WHY DID YOU EVEN CLICK HERE???',sorry:'SORRY',clubDescription:"Jelly Boom's club is a fan club of people who love Boom Tharatorn (Jelly Boom)",
   gotIt:'GOT IT',aboutTitle:'BOOM FOCUS ♡',aboutDescription:'A fan-made voting page dedicated only to Boom Tharatorn.',
-  support:'as a form of support',ok:'OK',addTitle:'Add another Boom spot? 💗',addDescription:'Add a new Boom Tharatorn voting position.',addConfirm:'ADD BOOM',
+  support:'as a form of support',ok:'OK',addTitle:'Add one more Boom? 💗',addDescription:'Add a new Boom Tharatorn voting position.',addConfirm:'ADD BOOM',
   periodTitle:'Voting period',periodDescription:'The voting period runs from 16 November 2026 through 16 November 2126. The countdown targets 16 November 2126 at 00:00 Bangkok time.',
   footer:'BOOM FOCUS · A fan-made page for Boom Tharatorn ♡',votes:'votes',total:'Total votes: ',
   failedVote:'Your vote could not be saved. Please try again.',failedAdd:'Could not add a Boom position. Please try again.',
@@ -226,7 +241,7 @@ const T = {
   vote:'VOTE',who:'Who is he?',birth:'Date of birth',age:'Age',country:'Country of birth',height:'Height',zodiac:'Zodiac sign',
   note:'Age is calculated automatically.',profileNote:'Age is calculated automatically.',
   jellyCaption:'You can pet him.',jellyMood:'Jelly Boom is happy to see you',pet:'pet ♡',petted:'Thank you, I love you too 💙',whoValue:'Cutie (Also an actor)',
-  addPlaceholder:'Enter a Boom place name',profileNick:'Baby Jelly Boom 🪼', countryValue:'Thailand',zodiacValue:'Libra'
+  profileNick:'Baby Jelly Boom 🪼', countryValue:'Thailand',zodiacValue:'Libra'
  },
  ru:{
   title:'ГОЛОСОВАНИЕ ВЕКА',days:'ДНЕЙ',hours:'ЧАСОВ',minutes:'МИНУТ',seconds:'СЕКУНД',
@@ -235,7 +250,7 @@ const T = {
   aboutMenu:'Об этой фан-странице',aboutBoom:'О Boom Tharatorn',language:'Язык',
   aouTitle:'ЗАЧЕМ ТЫ ВООБЩЕ СЮДА НАЖАЛ(А)???',sorry:'ПРОСТИ',clubDescription:'Клуб Jelly Boom — фан-клуб людей, которые любят Boom Tharatorn (Jelly Boom)',
   gotIt:'ПОНЯТНО',aboutTitle:'BOOM FOCUS ♡',aboutDescription:'Фанатская страница для голосования, посвящённая только Boom Tharatorn.',
-  support:'в знак поддержки',ok:'ОК',addTitle:'Добавить ещё одно место для Boom? 💗',addDescription:'Добавь новую позицию для голосования за Boom Tharatorn.',addConfirm:'ДОБАВИТЬ BOOM',
+  support:'в знак поддержки',ok:'ОК',addTitle:'Добавить ещё один Boom? 💗',addDescription:'Добавь новую позицию для голосования за Boom Tharatorn.',addConfirm:'ДОБАВИТЬ BOOM',
   periodTitle:'Период голосования',periodDescription:'Голосование проходит с 16 ноября 2026 года по 16 ноября 2126 года. Обратный отсчёт ведётся до 16 ноября 2126 года, 00:00 по времени Бангкока.',
   footer:'BOOM FOCUS · Фанатская страница, посвящённая Boom Tharatorn ♡',votes:'голосов',total:'Всего голосов: ',
   failedVote:'Не удалось сохранить голос. Попробуй ещё раз.',failedAdd:'Не удалось добавить место Boom. Попробуй ещё раз.',
@@ -245,7 +260,7 @@ const T = {
   vote:'ГОЛОСОВАТЬ',who:'Кто он?',birth:'Дата рождения',age:'Возраст',country:'Страна рождения',height:'Рост',zodiac:'Знак зодиака',
   note:'Возраст рассчитывается автоматически.',profileNote:'Возраст рассчитывается автоматически.',
   jellyCaption:'Ты можешь его погладить.',jellyMood:'Jelly Boom рад тебя видеть',pet:'погладить ♡',petted:'Спасибо, я тоже тебя люблю 💙',whoValue:'Милашка (также актёр)',
-  addPlaceholder:'Введи название места с Boom',profileNick:'Baby Jelly Boom 🪼',countryValue:'Таиланд',zodiacValue:'Весы'
+  profileNick:'Baby Jelly Boom 🪼',countryValue:'Таиланд',zodiacValue:'Весы'
  }
 };
 function t(){return T[currentLanguage]||T.en}
@@ -299,14 +314,13 @@ function applyLanguage(){
  set('periodTitle',x.periodTitle);set('periodDescription',x.periodDescription);set('periodClose',x.ok);
  set('footerDescription',x.footer);set('jellyCaption',x.jellyCaption);set('jellyMood',x.jellyMood);set('petButton',x.pet);
  const search=document.getElementById('search');search.placeholder=x.search;search.setAttribute('aria-label',x.search);
- document.getElementById('addLabelInput').placeholder=x.addPlaceholder;
  document.getElementById('languageSelect').value=currentLanguage;
  render();if(document.getElementById('profileModal').classList.contains('open'))showProfile();
 }
 function render(){
  const list=document.getElementById('entries');list.innerHTML='';
  const q=document.getElementById('search').value.trim().toLowerCase();
- const ordered=[...rows].sort((a,b)=>Number(b.count||0)-Number(a.count||0)||Number(a.id)-Number(b.id));
+ const ordered=[...rows].sort((a,b)=>Number(b.count||0)-Number(a.count||0)||Number(a.order||0)-Number(b.order||0));
  let shown=0;
  ordered.forEach((row,index)=>{
   const label=String(row.label||'Boom Tharatorn').replace(/\s*#\d+\s*$/,'');
@@ -365,41 +379,87 @@ function firebaseNodeIsEmpty(data){
  return data===null ||
   (typeof data==='object' && data!==null && Object.keys(data).length===0);
 }
+function firebaseOrderFor(id,place,index){
+ const fromPlace=Number(place?.order);
+ if(Number.isFinite(fromPlace)&&fromPlace>0)return fromPlace;
+ if(/^\d+$/.test(String(id)))return Number(id);
+ return index+1;
+}
+function preparePlacesForDisplay(data){
+ const prepared={...(data||{})};
+ let changed=false;
+
+ // Remove old, non-user-marked entries beyond the original ten.
+ // New places created by this version carry createdByUser:true and are retained.
+ Object.entries(prepared).forEach(([id,place],index)=>{
+  if(!place||typeof place!=='object'){
+   delete prepared[id];changed=true;return;
+  }
+  const order=firebaseOrderFor(id,place,index);
+  const suffix=String(place.label||'').match(/#\s*(\d+)\s*$/);
+  const isLegacyExtra=place.createdByUser!==true &&
+   (order>10 || (suffix&&Number(suffix[1])>10));
+  if(isLegacyExtra){delete prepared[id];changed=true;}
+ });
+
+ // Fill any missing starter positions without overwriting saved names,
+ // images, or vote counts for existing places.
+ const occupied=new Set();
+ Object.entries(prepared).forEach(([id,place],index)=>{
+  const order=firebaseOrderFor(id,place,index);
+  if(order>=1&&order<=10)occupied.add(order);
+ });
+ for(let i=1;i<=10;i++){
+  if(!occupied.has(i)){
+   const key=prepared[String(i)]?`starter-${i}`:String(i);
+   prepared[key]={
+    label:`Boom Tharatorn #${i}`,
+    votes:0,
+    order:i,
+    image:PHOTO_DATA
+   };
+   changed=true;
+  }
+ }
+ return {data:prepared,changed};
+}
 async function loadRows(){
- // Initialize both a missing (null) node and an empty {} / [] node.
- // Conditional ETag writes prevent overwriting data created by another visitor.
+ // Read/initialize with ETag so simultaneous visitors cannot overwrite one another.
  let snapshot=null;
- let initialized=false;
- for(let attempt=0;attempt<6;attempt++){
+ let completed=false;
+ for(let attempt=0;attempt<8;attempt++){
   const {response,data}=await firebaseFetch(FIREBASE_PLACES_URL,{
    method:'GET',
    headers:{'X-Firebase-ETag':'true'}
   });
-  snapshot=data;
-  if(!firebaseNodeIsEmpty(snapshot))break;
-
   const etag=response.headers.get('ETag');
-  if(!etag)throw new Error('Firebase did not return an ETag. Check database access and REST response headers.');
-  try{
-   const starterPlaces=makeInitialPlaces();
-   await firebaseFetch(FIREBASE_PLACES_URL,{
-    method:'PUT',
-    headers:{...FIREBASE_HEADERS,'If-Match':etag},
-    body:JSON.stringify(starterPlaces)
-   });
-   snapshot=starterPlaces;
-   initialized=true;
+  if(!etag)throw new Error('Firebase did not return an ETag. Check database access.');
+
+  const prepared=preparePlacesForDisplay(data);
+  if(prepared.changed){
+   try{
+    await firebaseFetch(FIREBASE_PLACES_URL,{
+     method:'PUT',
+     headers:{...FIREBASE_HEADERS,'If-Match':etag},
+     body:JSON.stringify(prepared.data)
+    });
+    snapshot=prepared.data;
+    completed=true;
+    break;
+   }catch(error){
+    if(error.status!==412||attempt===7)throw error;
+    // Another visitor changed the data; fetch it again before applying changes.
+   }
+  }else{
+   snapshot=prepared.data;
+   completed=true;
    break;
-  }catch(error){
-   if(error.status!==412||attempt===5)throw error;
-   // A different visitor changed the node first; fetch the latest database state.
   }
  }
+ if(!completed)throw new Error('Could not initialize Firebase places after concurrent updates.');
  rows=rowsFromFirebase(snapshot);
  render();
- if(rows.length===0 && !initialized){
-  throw new Error('Firebase /places.json is still empty after initialization. Check Firebase Realtime Database Rules.');
- }
+ if(rows.length<10)throw new Error('Firebase /places.json does not contain all ten starter places.');
 }
 async function castVote(row){
  if(hasVotedToday()){showToast(t().voteAgain);return;}
@@ -442,19 +502,19 @@ async function castVote(row){
  }catch(err){console.error(err);showToast(t().failedVote);}
 }
 async function addBoom(){
- const input=document.getElementById('addLabelInput');
- const label=input.value.trim()||'Boom Tharatorn';
  try{
   const order=rows.reduce((max,r)=>Math.max(max,Number(r.order)||0),0)+1;
-  const place={label,votes:0,order,image:PHOTO_DATA};
+  const label=`Boom Tharatorn #${order}`;
+  const place={label,votes:0,order,image:PHOTO_DATA,createdByUser:true};
   const {data}=await firebaseFetch(FIREBASE_PLACES_URL,{
    method:'POST',
    headers:FIREBASE_HEADERS,
    body:JSON.stringify(place)
   });
   if(!data||!data.name)throw new Error('Firebase did not return the new place ID.');
-  rows.push({id:data.name,label,count:0,order,image:PHOTO_DATA});
-  input.value='';closeModal('confirmModal');render();
+  rows.push({id:data.name,label,count:0,order,image:PHOTO_DATA,createdByUser:true});
+  closeModal('confirmModal');
+  render();
  }catch(err){console.error(err);showToast(t().failedAdd);}
 }
 function updateSuggestions(){
@@ -479,8 +539,16 @@ document.getElementById('verify').addEventListener('click',()=>openModal('verify
 document.getElementById('myJelly').addEventListener('click',()=>openModal('jellyModal'));
 document.getElementById('addBoom').addEventListener('click',()=>openModal('confirmModal'));
 document.getElementById('confirmAdd').addEventListener('click',addBoom);
-document.getElementById('addLabelInput').addEventListener('keydown',e=>{if(e.key==='Enter')addBoom()});
 document.getElementById('periodInfo').addEventListener('click',()=>openModal('periodModal'));
+
+const backToTopButton=document.getElementById('backToTop');
+function updateBackToTop(){
+ backToTopButton.classList.toggle('visible',window.scrollY>280);
+}
+window.addEventListener('scroll',updateBackToTop,{passive:true});
+backToTopButton.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+updateBackToTop();
+
 const menuBtn=document.getElementById('menuBtn'),menuPanel=document.getElementById('menuPanel');
 menuBtn.addEventListener('click',()=>{const isOpen=menuPanel.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(isOpen))});
 document.getElementById('menuInfo').addEventListener('click',()=>{menuPanel.classList.remove('open');openModal('infoModal')});
