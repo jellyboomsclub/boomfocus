@@ -361,34 +361,45 @@ function rowsFromFirebase(data){
   order:Number(place?.order??index+1)
  }));
 }
+function firebaseNodeIsEmpty(data){
+ return data===null ||
+  (typeof data==='object' && data!==null && Object.keys(data).length===0);
+}
 async function loadRows(){
- // A null node is initialized once. ETag + If-Match prevents two first visitors
- // from overwriting one another while creating the initial ten places.
+ // Initialize both a missing (null) node and an empty {} / [] node.
+ // Conditional ETag writes prevent overwriting data created by another visitor.
  let snapshot=null;
- for(let attempt=0;attempt<5;attempt++){
+ let initialized=false;
+ for(let attempt=0;attempt<6;attempt++){
   const {response,data}=await firebaseFetch(FIREBASE_PLACES_URL,{
    method:'GET',
    headers:{'X-Firebase-ETag':'true'}
   });
   snapshot=data;
-  if(snapshot!==null)break;
+  if(!firebaseNodeIsEmpty(snapshot))break;
+
   const etag=response.headers.get('ETag');
-  if(!etag)throw new Error('Firebase did not return an ETag for initial setup.');
+  if(!etag)throw new Error('Firebase did not return an ETag. Check database access and REST response headers.');
   try{
+   const starterPlaces=makeInitialPlaces();
    await firebaseFetch(FIREBASE_PLACES_URL,{
     method:'PUT',
     headers:{...FIREBASE_HEADERS,'If-Match':etag},
-    body:JSON.stringify(makeInitialPlaces())
+    body:JSON.stringify(starterPlaces)
    });
-   snapshot=makeInitialPlaces();
+   snapshot=starterPlaces;
+   initialized=true;
    break;
   }catch(error){
-   if(error.status!==412||attempt===4)throw error;
-   // Another visitor initialized the database first; fetch their data.
+   if(error.status!==412||attempt===5)throw error;
+   // A different visitor changed the node first; fetch the latest database state.
   }
  }
  rows=rowsFromFirebase(snapshot);
  render();
+ if(rows.length===0 && !initialized){
+  throw new Error('Firebase /places.json is still empty after initialization. Check Firebase Realtime Database Rules.');
+ }
 }
 async function castVote(row){
  if(hasVotedToday()){showToast(t().voteAgain);return;}
